@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:appteste/constants/routes.dart';
+import 'package:appteste/models/task.dart';
 
 class Home extends StatefulWidget {
-  const new({super.key});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -10,7 +11,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  List<String> tasks = ['Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5'];
+  List<Task> tasks = [];
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +23,40 @@ class _HomeState extends State<Home> {
       body: ListView.builder(
         itemCount: tasks.length, 
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text('${tasks[index]} ', style: const TextStyle(fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold)),
+          return CheckboxListTile(
+            title: Text(
+              tasks[index].title,
+              style: TextStyle(
+                decoration: tasks[index].isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+                fontSize: 23
+              ),
+            ),
+            subtitle: Text(
+              tasks[index].description,
+              style: TextStyle(
+                fontSize: 20  
+              )
+            ),
+            value: tasks[index].isCompleted,
+            onChanged: (value) {
+              setState(() {
+                tasks[index].isCompleted = value ?? false;    
+              });            
+            },
+            checkColor: Colors.white,
+            activeColor: Colors.blue,
           );
         }
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
-        onPressed: () {
-          Navigator.of(context).pushNamed(notesRoute);
+        onPressed: () async {
+          final Task? result = await Navigator.of(context).pushNamed(notesRoute);
+          if (result != null){
+            setState(() {
+              tasks.add(result);
+            });
+          }
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
