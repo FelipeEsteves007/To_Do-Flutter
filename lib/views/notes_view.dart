@@ -11,6 +11,7 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late final TextEditingController _notesController;
   late final TextEditingController _titleController;
+  Object? get message => ModalRoute.of(context)!.settings.arguments;
 
   @override
   void initState() {
@@ -19,6 +20,12 @@ class _NotesViewState extends State<NotesView> {
     _notesController = TextEditingController();
   }
 
+  @override
+  void didChangeDependencies() {
+    print(message);
+    super.didChangeDependencies();
+  }
+  
   @override
   void dispose() {
     _titleController.dispose();
