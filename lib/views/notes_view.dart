@@ -22,8 +22,12 @@ class _NotesViewState extends State<NotesView> {
 
   @override
   void didChangeDependencies() {
-    print(message);
     super.didChangeDependencies();
+    final args = message;
+    if (args is Task) {
+      _titleController.text = args.title;
+      _notesController.text = args.description;
+    }
   }
   
   @override

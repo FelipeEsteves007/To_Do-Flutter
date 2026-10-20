@@ -37,14 +37,24 @@ class _HomeState extends State<Home> {
                 child: Icon(Icons.edit, color: Colors.grey,size: 45),
               ),
             ),
-            key: ValueKey(tasks[index]),        
+            key: ValueKey(tasks[index]),    
+            confirmDismiss: (direction) async {
+              if (direction == DismissDirection.endToStart) {
+                final newResult = await Navigator.of(context).pushNamed(notesRoute, arguments: tasks[index]);
+                  if (newResult is Task){
+                    setState(() {
+                      tasks[index] = newResult;
+                    });
+                  }
+                return false;
+              }
+              return true;
+            },    
             onDismissed: (direction) {
               if (direction == DismissDirection.startToEnd) {
                 setState(() {
                   tasks.remove(tasks[index]); 
                 });            
-              } else if (direction == DismissDirection.endToStart) {
-                Navigator.of(context).pushNamed(notesRoute, arguments: tasks[index]);
               }
             }, 
             child: CheckboxListTile(
