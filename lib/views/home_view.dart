@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:appteste/constants/routes.dart';
 import 'package:appteste/models/task.dart';
+import 'package:appteste/services/database_services.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,6 +13,17 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   List<Task> tasks = [];
+
+  Future<void> _initDb() async {
+    await DatabaseServices().openDb();
+    print('database open');
+  }
+
+  @override
+  void initState() {
+    _initDb();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
