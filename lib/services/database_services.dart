@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:appteste/models/task.dart';
 
 class DatabaseServices {
 
@@ -15,4 +16,35 @@ class DatabaseServices {
             },
         );
     }
+
+    Future<int> insertTask(Task task) async  {
+      final db = await openDb();
+      return await db.insert('TASKS', task.toMap());
+   }
+
+   Future<int> deleteTask(Task task) async {
+      final db = await openDb();
+
+      return await db.delete(
+          'TASKS',
+          where: "id = ?",
+          whereArgs: [task.id]
+          );
+   }
+   
+   Future<List<Task>> getAll() async {
+     final db = await openDb(); 
+     final maps = await db.query('TASKS');
+     return maps.map((m) => Task.fromMap(m)).toList();
+   }
+
+   Future<int> updateTask(Task task) async {
+      final db = await openDb(); 
+      return await db.update(
+        'TASKS',
+        task.toMap(),
+        where: 'id = ?',
+        whereArgs: [task.id],
+      );
+   }
 }
