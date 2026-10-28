@@ -15,8 +15,10 @@ class _HomeState extends State<Home> {
   List<Task> tasks = [];
 
   Future<void> _initDb() async {
-    await DatabaseServices().openDb();
-    print('database open');
+    final allTasks = await DatabaseServices().getAll();
+    setState(() {
+      tasks = allTasks;
+    });
   }
 
   @override
@@ -54,6 +56,7 @@ class _HomeState extends State<Home> {
               if (direction == DismissDirection.endToStart) {
                 final newResult = await Navigator.of(context).pushNamed(notesRoute, arguments: tasks[index]);
                   if (newResult is Task){
+                    DatabaseServices().updateTask(newResult);
                     setState(() {
                       tasks[index] = newResult;
                     });
@@ -64,8 +67,10 @@ class _HomeState extends State<Home> {
             },    
             onDismissed: (direction) {
               if (direction == DismissDirection.startToEnd) {
+                final deleteNote = tasks[index];
+                DatabaseServices().deleteTask(deleteNote);
                 setState(() {
-                  tasks.remove(tasks[index]); 
+                  tasks.remove(deleteNote); 
                 });            
               }
             }, 
@@ -87,7 +92,8 @@ class _HomeState extends State<Home> {
               onChanged: (value) {
                 setState(() {
                   tasks[index].isCompleted = value ?? false;    
-                });            
+                });       
+                DatabaseServices().updateTask(tasks[index]);     
               },
               checkColor: Colors.white,
               activeColor: Colors.blue,
@@ -99,9 +105,11 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.blue,
         onPressed: () async {
           final result = await Navigator.of(context).pushNamed(notesRoute);
-          if (result != null){
+          if (result is Task){
+            final newId = await DatabaseServices().insertTask(result);
+            result.id = newId;
             setState(() {
-              tasks.add(result as Task);
+              tasks.add(result);
             });
           }
         },
