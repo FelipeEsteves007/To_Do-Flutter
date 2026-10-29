@@ -56,6 +56,8 @@ class _HomeState extends State<Home> {
               if (direction == DismissDirection.endToStart) {
                 final newResult = await Navigator.of(context).pushNamed(notesRoute, arguments: tasks[index]);
                   if (newResult is Task){
+                    newResult.id = tasks[index].id;
+                    newResult.isCompleted = tasks[index].isCompleted;
                     DatabaseServices().updateTask(newResult);
                     setState(() {
                       tasks[index] = newResult;
